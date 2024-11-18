@@ -1,39 +1,45 @@
 package com.example.organisationwebsite.controller;
 
 import com.example.organisationwebsite.module.Employee;
-import com.example.organisationwebsite.service.DepartmentService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.organisationwebsite.service.DepartmentServiceImpl;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
 
 @RestController
-@RequestMapping(path = "/departments")
+@RequestMapping(path = "/department")
 public class DepartmentController {
     // Init service module
-    private final DepartmentService departmentService;
+    private final DepartmentServiceImpl departmentService;
 
-    public DepartmentController(DepartmentService departmentService) {
-        this.departmentService = departmentService;
+    public DepartmentController(DepartmentServiceImpl departmentServiceImpl) {
+        this.departmentService = departmentServiceImpl;
     }
 
     // Get methods
-    @GetMapping(path = "/max-salary")
-    public Employee getMaxSalary(@RequestParam("departmentId") int departmentId) {
-        return departmentService.findMaxSalaryByDepartment(departmentId);
+    @GetMapping(path = "/{id}/employees")
+    public List<Employee> getEmployees(@PathVariable int id) {
+        return departmentService.returnEmployeesByDepartment(id);
     }
 
-    @GetMapping(path = "/min-salary")
-    public Employee getMinSalary(@RequestParam("departmentId") int departmentId) {
-        return departmentService.findMinSalaryByDepartment(departmentId);
+    @GetMapping(path = "/{id}/salary/max")
+    public Employee getMaxSalary(@PathVariable int id) {
+        return departmentService.findMaxSalaryByDepartment(id);
     }
 
-    @GetMapping(path = "all")
-    public Object getAllEmployees(@RequestParam(required = false, defaultValue = "-1") int departmentId) {
-        if (departmentId == -1) {
-            return departmentService.returnAllEmployees();
-        }
+    @GetMapping(path = "/{id}/salary/min")
+    public Employee getMinSalary(@PathVariable int id) {
+        return departmentService.findMinSalaryByDepartment(id);
+    }
 
-        return departmentService.returnEmployeesByDepartment(departmentId);
+    @GetMapping(path = "/{id}/salary/sum")
+    public double getSumSalary(@PathVariable int id) {
+        return departmentService.returnEmployeesSalarySumByDepartmentId(id);
+    }
+
+    @GetMapping(path = "/employees")
+    public HashMap<Integer, List<Employee>> getAllEmployees() {
+        return departmentService.returnAllEmployees();
     }
 }
